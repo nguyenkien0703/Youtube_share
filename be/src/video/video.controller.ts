@@ -85,12 +85,8 @@ export class VideoController {
 
         if(videoIsShared.success=== true ){
             const user = req['user_data'];
-            console.log("user     ", user);
-
             const video = videoIsShared.video;
-            console.log("video     ", video);
             const shareDate =videoIsShared.formattedDate;
-            console.log("shareDate   ", shareDate);
             this.websocketService.emitEventToAll('videoShared', {
                 userId: user.id,
                 videoId: video.id,

@@ -28,8 +28,4 @@ export class Video extends BaseEntity{
     @CreateDateColumn({ name: 'created_at' })
     createdAt: Date;
 
-    
-
-    
-
 }

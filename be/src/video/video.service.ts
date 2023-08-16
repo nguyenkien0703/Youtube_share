@@ -48,6 +48,7 @@ export class VideoService {
             take: _limit,
             skip: skip,
         })
+
         const videosWithStatus = await Promise.all(
           res.map(async (video)=> {
               const videoWithStatus = {
@@ -147,7 +148,8 @@ export class VideoService {
             }
             const shareDate = new Date();
             const formattedDate = format(shareDate, "EEE MMM dd yyyy HH:mm:ss");
-            console.log(formattedDate);
+
+
             await this.shareRepository.save({ userId, videoId, shareDate });
             const video = await this.videoRepository
             .createQueryBuilder("video")
@@ -163,39 +165,25 @@ export class VideoService {
 
     async  getSharedVideoByUserId(userId: number,query: FilterVideoDto) : Promise<any> {
 
-        // const shares = await this.shareRepository
-        //   .createQueryBuilder("share")
-        //   .select('share.videoId')
-        //   .leftJoin('share.videoId', 'video')
-        //   .addSelect('video.id')
-        //   .where("share.userId = :userId", { userId: userId })
-        //   .getRawMany();
-
         const shares = await this.shareRepository
           .createQueryBuilder("share")
           .where("share.userId = :userId", { userId: userId })
           .getRawMany();
-        console.log("shares     ", shares);
         const videoIds = shares.map((share) => share.share_video_id);
-        console.log("videoIds    ", videoIds);
         const videosShare: Video[] = [];
+
         for (const videoId of videoIds) {
             const video = await this.videoRepository
               .createQueryBuilder("video")
               .where("video.id = :videoId", { videoId: videoId })
               .getOne();
-            console.log("video   ", video);
             if (video) {
                 videosShare.push(video);
             }
         }
-
-
-
-
-        console.log("videosShare     ", videosShare );
         const _page = Number(query._page) || 1;
         const search = query.search || '';
+
         const filteredVideos = search
           ? videosShare.filter(video => video.title.includes(search))
           : videosShare;
@@ -205,12 +193,12 @@ export class VideoService {
         const lastPage = Math.ceil(total/_limit);
         const skip = (_page-1 ) * _limit;
         const dataResponse = filteredVideos.slice(skip, skip + _limit);
-        console.log("dataResponse   ", dataResponse);
         const pagination = {
             _page: _page,
             _limit: _limit,
             _totalRows: total,
         };
+
         return {
             data: dataResponse,
             pagination: pagination,

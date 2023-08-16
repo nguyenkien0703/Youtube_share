@@ -52,7 +52,6 @@ export class AuthService {
         try{
 
             const verifyTokenOld = await verifyRefreshJWT(refreshTokenDto.refreshToken);
-            console.log("verifyTokenOld     ",verifyTokenOld);
             let access_token;
             let refresh_token;
             try{
