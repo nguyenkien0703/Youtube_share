@@ -1,5 +1,5 @@
-import { User } from "src/user/entitties/user.entity";
-import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+
+import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('videos')
 export class Video extends BaseEntity{
@@ -17,14 +17,6 @@ export class Video extends BaseEntity{
         default: 0,
     })
     likeCount: number ;
-
-
-
-    @ManyToOne(()=> User, (user)=> user.videos,{
-        onDelete: "CASCADE"
-    })
-    user: User;
-
     @CreateDateColumn({ name: 'created_at' })
     createdAt: Date;
 

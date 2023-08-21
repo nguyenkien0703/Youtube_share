@@ -1,8 +1,7 @@
 import { CanActivate, ExecutionContext, HttpException, Injectable, UnauthorizedException } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
+import { verifyRefreshJWT } from "../utils";
 import { Request } from 'express';
-import { log } from "console";
-import { verifyRefreshJWT } from "../utils/constants";
+
 @Injectable()
 export class AuthGuard implements CanActivate {
 
@@ -16,6 +15,7 @@ export class AuthGuard implements CanActivate {
            
             const payload = await verifyRefreshJWT(token);
             request['user_data']= payload;
+
         }catch{
             throw new HttpException({
                 status: 419,

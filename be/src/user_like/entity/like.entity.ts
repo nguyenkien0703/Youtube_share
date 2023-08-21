@@ -1,3 +1,4 @@
+import { USER_LIKE_STATUS } from "src/shareEntire";
 import { User } from "src/user/entitties/user.entity";
 import { Video } from "src/video/entity/video.entity";
 import {
@@ -10,7 +11,7 @@ import {
     PrimaryGeneratedColumn,
     Unique
 } from "typeorm";
-import { USER_LIKE_STATUS } from "../utils/constants";
+
 
 @Entity('user_like')
 @Unique(['userId', 'videoId'])
@@ -37,8 +38,6 @@ export class UserLike extends BaseEntity{
         default: USER_LIKE_STATUS.NULL,
     })
     status: USER_LIKE_STATUS;
-    
-
 
     @CreateDateColumn({ name: 'created_at' })
     createdAt: Date;

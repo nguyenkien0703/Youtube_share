@@ -4,20 +4,30 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
-import { dataSourceOptions } from 'db/data-source';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { VideoModule } from "./video/video.module";
 import { WebsocketModule } from "./websocket/websocke.module";
+import { SocketModule } from './socket/socket.module';
+import { UserLikeController } from './user_like/user_like.controller';
+import { UserLikeModule } from './user_like/user_like.module';
+import configuration from './shareEntire/config/configuration';
+import { DatabaseModule } from 'db/data-source';
 @Module({
   imports: [
-    TypeOrmModule.forRoot(dataSourceOptions),
+    // TypeOrmModule.forRoot(dataSourceOptions),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [configuration],
+    }),
+    DatabaseModule,
     UserModule, 
     AuthModule,
     ConfigModule.forRoot() ,
     VideoModule,
-    WebsocketModule
+    WebsocketModule,
+    SocketModule,
+    UserLikeModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, UserLikeController],
   providers: [
     AppService,
   ]

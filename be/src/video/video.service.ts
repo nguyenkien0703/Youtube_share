@@ -5,12 +5,13 @@ import { In, Like, Repository  } from "typeorm";
 import { User } from "src/user/entitties/user.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FilterVideoDto } from "./dto/filter-video.dto";
-import { UserLike } from "../user_like/like.entity";
 import { Share } from "../share/share.entity";
 import { log } from "console";
-import { USER_LIKE_STATUS } from "../utils/constants";
-import { SocketGateway } from "../socket.gateway";
+import { SocketGateway } from "../socket/socket.gateway";
 import { format } from 'date-fns';
+import { USER_LIKE_STATUS } from '../shareEntire/constants';
+import { httpErrors } from "src/shareEntire/exception-filter/http-errors.const";
+import { UserLike } from "src/user_like/entity/like.entity";
 
 @Injectable()
 export class VideoService {
@@ -30,9 +31,10 @@ export class VideoService {
             })
             return await this.videoRepository.findOneBy({id: res.id});
         }catch(error ){
-            throw new HttpException('can not create video', HttpStatus.BAD_REQUEST);
+            throw new HttpException(httpErrors.CANNOT_CREATE_VIDEO, HttpStatus.BAD_REQUEST);
         }
     }
+
     async findAll(query: FilterVideoDto,userId?: number ): Promise<any> {
         const _limit = Number(query._limit) || 10 ;
         const _page = Number(query._page) || 1;
@@ -88,48 +90,6 @@ export class VideoService {
     }
 
 
-// ===============handle likeCount,every video=================
-    async  toggleVideoLike(userId: number, videoId: number) {
-        const existingLike = await this.userLikeRepository
-            .createQueryBuilder("userLike")
-            .where("userLike.userId = :userId", { userId: userId })
-            .andWhere("userLike.videoId = :videoId", { videoId: videoId })
-            .getOne();
-
-        const video = await this.videoRepository
-            .createQueryBuilder("video")
-            .where("video.id = :videoId", { videoId: videoId })
-            .getOne();
-        
-        if (video) {
-            if (existingLike && existingLike.status === USER_LIKE_STATUS.LIKE) {
-                // User đã ấn like, chuyển thành unlike và giảm likeCount của video
-                video.likeCount -=1 ; 
-                await video.save();
-
-                existingLike.status = USER_LIKE_STATUS.UNLIKE;
-                await existingLike.save();
-            } else if(existingLike && existingLike.status === USER_LIKE_STATUS.UNLIKE){
-                // user đã ấn unlike ròi, ấn thêm 1 cái nữa thì staus của video là null
-                await existingLike.remove(); 
-
-            }
-            else {
-                // User chưa ấn like , tăng likeCount của video
-                video.likeCount += 1;
-                await video.save();
-                const newLike = new UserLike();
-                newLike.userId = userId;
-                newLike.videoId = videoId;
-                newLike.status = USER_LIKE_STATUS.LIKE;
-                await newLike.save();
-            }    
-                
-            
-        } else {
-            throw new HttpException("video with videoId not exist", HttpStatus.NOT_FOUND);
-        }
-    }
 
 
 
@@ -158,7 +118,6 @@ export class VideoService {
 
             return { success: true, video, formattedDate};
         } catch (error) {
-            console.error("Error in sharedVideo:", error);
             return { success: false, message: "Error occurred while sharing the video." };
         }
     }

@@ -18,23 +18,3 @@ export class LoginUserDto {
 
 
 
-export class RegisterUserDto {
-  @IsString()
-  @IsNotEmpty()
-  username: string ;
-
-
-  @IsNotEmpty()
-  @IsEmail()
-  email: string ;
-
-
-  @IsString()
-  @IsNotEmpty()
-  password: string ;
-
-  phone_number: string ;
-
-  date_of_birth: string ;
-
-}

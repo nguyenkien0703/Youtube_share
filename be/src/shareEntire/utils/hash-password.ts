@@ -1,4 +1,4 @@
-import { generateSaltRound } from "./randomNumber";
+import { generateSaltRound } from "./random-number";
 import * as bcrypt from 'bcryptjs';
 
 export const hashPassword = async (password: string) =>  {

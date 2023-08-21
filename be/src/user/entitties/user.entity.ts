@@ -24,8 +24,8 @@ export class User extends BaseEntity{
 
     @CreateDateColumn({ name: 'created_at' })
     createdAt: Date;
-
-    @OneToMany(() => Video, (video) => video.user)
-    videos: Video[]
+    //
+    // @OneToMany(() => Video, (video) => video.user)
+    // videos: Video[]
 
 }

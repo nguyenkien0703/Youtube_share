@@ -8,7 +8,7 @@ import {
 } from "@nestjs/websockets";
 
   import { Server, Socket  } from "socket.io";
-  import { WebsocketService } from "./websocket/websocket.service";
+  import { WebsocketService } from "../websocket/websocket.service";
   import { Injectable } from "@nestjs/common";
 
 
